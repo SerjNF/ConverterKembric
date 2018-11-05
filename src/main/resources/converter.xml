@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <!--<bean id="ui" class="ru.inbox.foreman.converter.UI.UI"/>-->
+    <!--<bean id="controller" class="ru.inbox.foreman.converter.controller.ControllerImpl"/>-->
+    <!--<bean id="field" class="ru.inbox.foreman.seatWar.UI.CellField" scope="prototype">-->
+        <!--<constructor-arg index="0" value="10"/>-->
+        <!--<constructor-arg index="1" value="10"/>-->
+    <!--</bean>-->
+
+</beans>
