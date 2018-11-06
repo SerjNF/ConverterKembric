@@ -7,10 +7,9 @@ import javax.swing.table.DefaultTableModel;
 public class Converter {
 
     public Object[][] convert(DefaultTableModel tableModelOpenFile, int[] selectRows) {
+        int offSetRows = 2;
         int rowsCount = tableModelOpenFile.getRowCount();
-        Object[][] result = new Object[rowsCount + 2][2];
-
-        //      List rowsList = Arrays.asList(selectRows);
+        Object[][] result = new Object[rowsCount + offSetRows][2];
 
         for (int i = 0; i < rowsCount; ++i) {
             result[i][0] = String.valueOf(i);

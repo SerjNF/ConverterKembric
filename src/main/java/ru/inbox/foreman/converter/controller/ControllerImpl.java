@@ -19,7 +19,7 @@ public class ControllerImpl implements Controller {
 
     public Object[][] readFile(File selectedFile) throws IOException {
         String pathFile = selectedFile.getPath();
-            return readFile.readFile(pathFile);
+        return readFile.readFile(pathFile);
     }
 
 

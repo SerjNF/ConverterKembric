@@ -18,12 +18,12 @@ public class UI extends JPanel {
     private DefaultTableModel tableModelOpenFile;
     private DefaultTableModel tableModelSaveFile;
     private Object[] columnsHeader = new String[]{"№", "Наименование"};
-    FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel", "xlsx");
+    private FileNameExtensionFilter filter;
 
     public UI() {
         controller = new ControllerImpl();
+        filter = new FileNameExtensionFilter("Excel", "xlsx");
         createUI();
-
     }
 
     private void createUI() {
@@ -34,17 +34,55 @@ public class UI extends JPanel {
         this.setLayout(new GridLayout(1, 2));
         this.add(createReadPanel());
         this.add(createSavePanel());
-
-
     }
 
     private JPanel createReadPanel() {
         JLabel choiceFileLabel = new JLabel("Файд не выбран");
+        JButton openButton = createOpenButton(choiceFileLabel);
 
+        JButton convert = new JButton("Конвертировать");
+        convert.addActionListener(e -> {
+            tableModelSaveFile.setRowCount(0);
+            Object[][] convertedList = controller.convertFile(tableModelOpenFile, openFileTable.getSelectedRows());
+            addRowsOnTable(tableModelSaveFile, convertedList);
+        });
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.add(openButton);
+        buttonPanel.add(convert);
+
+        JPanel southPanel = new JPanel(new BorderLayout());
+        JButton anSelectAll = new JButton("Сбросить выделение");
+        anSelectAll.addActionListener(e -> openFileTable.getSelectionModel().clearSelection());
+        JButton selectAll = new JButton("Выделить все");
+        selectAll.addActionListener(e -> openFileTable.selectAll());
+        JPanel selectPanel = new JPanel(new GridLayout(1, 2));
+        selectPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        selectPanel.add(selectAll);
+        selectPanel.add(anSelectAll);
+        southPanel.add(choiceFileLabel, BorderLayout.SOUTH);
+        southPanel.add(selectPanel, BorderLayout.NORTH);
+        openFileTable = new JTable(tableModelOpenFile);
+        openFileTable.getColumnModel().getColumn(0).setMaxWidth(40);
+        openFileTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+
+        openFileTable.setRowHeight(30);
+        openFileTable.setFont(new Font("Arial Narrow", Font.BOLD, 20));
+        openFileTable.getTableHeader().setFont(new Font("Arial Narrow", Font.BOLD, 20));
+
+        JPanel readPanel = new JPanel();
+        readPanel.setLayout(new BorderLayout());
+        readPanel.add(buttonPanel, BorderLayout.NORTH);
+        readPanel.add(new JScrollPane(openFileTable));
+        readPanel.add(southPanel, BorderLayout.SOUTH);
+        readPanel.setBorder(new EmptyBorder(10, 5, 10, 10));
+        return readPanel;
+    }
+
+    private JButton createOpenButton(JLabel choiceFileLabel) {
         JButton openButton = new JButton("Открыть файл");
         openButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
-
             fileChooser.setDialogTitle("Выбор файла");
             fileChooser.setFileFilter(filter);
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -68,43 +106,7 @@ public class UI extends JPanel {
                 }
             }
         });
-
-        JButton convert = new JButton("Конвертировать");
-        convert.addActionListener(e -> {
-            tableModelSaveFile.setRowCount(0);
-            Object[][] convertedList = controller.convertFile(tableModelOpenFile, openFileTable.getSelectedRows());
-            addRowsOnTable(tableModelSaveFile, convertedList);
-        });
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        buttonPanel.add(openButton);
-        buttonPanel.add(convert);
-
-        JPanel southPanel = new JPanel(new BorderLayout());
-        JButton anSelectAll = new JButton("Сбросить выделение");
-        anSelectAll.addActionListener(e -> openFileTable.getSelectionModel().clearSelection());
-        JButton selectAll = new JButton("Выделить все");
-        selectAll.addActionListener(e -> openFileTable.selectAll());
-        JPanel selectPanel = new JPanel(new GridLayout(1,2));
-        selectPanel.add(selectAll);
-        selectPanel.add(anSelectAll);
-        southPanel.add(choiceFileLabel, BorderLayout.SOUTH);
-        southPanel.add(selectPanel, BorderLayout.NORTH);
-        openFileTable = new JTable(tableModelOpenFile);
-        openFileTable.getColumnModel().getColumn(0).setMaxWidth(40);
-        openFileTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-
-        openFileTable.setRowHeight(30);
-        openFileTable.setFont(new Font("Arial Narrow", Font.BOLD, 20));
-        openFileTable.getTableHeader().setFont(new Font("Arial Narrow", Font.BOLD, 20));
-
-        JPanel readPanel = new JPanel();
-        readPanel.setLayout(new BorderLayout());
-        readPanel.add(buttonPanel, BorderLayout.NORTH);
-        readPanel.add(new JScrollPane(openFileTable));
-        readPanel.add(southPanel, BorderLayout.SOUTH);
-        readPanel.setBorder(new EmptyBorder(10, 5, 10, 10));
-        return readPanel;
+        return openButton;
     }
 
     private void addRowsOnTable(DefaultTableModel tableModel, Object[] readList) {
@@ -116,28 +118,7 @@ public class UI extends JPanel {
 
     private JPanel createSavePanel() {
         JLabel choiceSaveLabel = new JLabel("Файл не сохранен");
-
-        JButton saveButton = new JButton("Сохранить файл");
-        saveButton.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setFileFilter(filter);
-            fileChooser.setDialogTitle("Сохранить файл");
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            int result = fileChooser.showSaveDialog(UI.this);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                File saveFile = fileChooser.getSelectedFile();
-                choiceSaveLabel.setText("Сохранено в: " + saveFile.toString());
-                try {
-                    controller.saveFile(saveFile, tableModelSaveFile);
-                    JOptionPane.showMessageDialog(UI.this, "Файл сохранен");
-                } catch (IOException e1) {
-                    JOptionPane.showMessageDialog(UI.this, "Не удалось сохранить файл");
-                    e1.printStackTrace();
-                }
-
-            }
-        });
-
+        JButton saveButton = createSaveButton(choiceSaveLabel);
         JButton repeat = new JButton("Повторить");
         repeat.addActionListener(e -> replace());
 
@@ -161,13 +142,34 @@ public class UI extends JPanel {
         return savePanel;
     }
 
+    private JButton createSaveButton(JLabel choiceSaveLabel) {
+        JButton saveButton = new JButton("Сохранить файл");
+        saveButton.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileFilter(filter);
+            fileChooser.setDialogTitle("Сохранить файл");
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            int result = fileChooser.showSaveDialog(UI.this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File saveFile = fileChooser.getSelectedFile();
+                choiceSaveLabel.setText("Сохранено в: " + saveFile.toString());
+                try {
+                    controller.saveFile(saveFile, tableModelSaveFile);
+                    JOptionPane.showMessageDialog(UI.this, "Файл сохранен");
+                } catch (IOException e1) {
+                    JOptionPane.showMessageDialog(UI.this, "Не удалось сохранить файл");
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+        return saveButton;
+    }
+
     private void replace() {
-        // tableModelOpenFile.setRowCount(0);
         for (int i = 0; i < tableModelOpenFile.getRowCount(); i++) {
             tableModelOpenFile.setValueAt(tableModelSaveFile.getValueAt(i, 1), i, 1);
         }
         tableModelSaveFile.setRowCount(0);
     }
-
-
 }

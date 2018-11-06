@@ -9,14 +9,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReadFile {
     public Object[][] readFile(String filePath) throws IOException {
-        System.out.println(filePath);
         List<String> readiedList = new ArrayList<>();
         XSSFWorkbook myExcelBook;
         BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(filePath));
@@ -37,7 +35,7 @@ public class ReadFile {
         }
 
         Object[][] resultReadList = new String[readiedList.size()][2];
-        for (int i = 0; i < resultReadList.length; ++i){
+        for (int i = 0; i < resultReadList.length; ++i) {
             resultReadList[i][1] = readiedList.get(i);
             resultReadList[i][0] = String.valueOf(i);
         }
