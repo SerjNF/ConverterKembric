@@ -17,7 +17,7 @@ public class UI extends JPanel {
     private Controller controller;
     private DefaultTableModel tableModelOpenFile;
     private DefaultTableModel tableModelSaveFile;
-    private Object[] columnsHeader = new String[]{"Наименование"};
+    private Object[] columnsHeader = new String[]{"№", "Наименование"};
     FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel", "xlsx");
 
     public UI() {
@@ -83,10 +83,17 @@ public class UI extends JPanel {
         JPanel southPanel = new JPanel(new BorderLayout());
         JButton anSelectAll = new JButton("Сбросить выделение");
         anSelectAll.addActionListener(e -> openFileTable.getSelectionModel().clearSelection());
+        JButton selectAll = new JButton("Выделить все");
+        selectAll.addActionListener(e -> openFileTable.selectAll());
+        JPanel selectPanel = new JPanel(new GridLayout(1,2));
+        selectPanel.add(selectAll);
+        selectPanel.add(anSelectAll);
         southPanel.add(choiceFileLabel, BorderLayout.SOUTH);
-        southPanel.add(anSelectAll, BorderLayout.NORTH);
-
+        southPanel.add(selectPanel, BorderLayout.NORTH);
         openFileTable = new JTable(tableModelOpenFile);
+        openFileTable.getColumnModel().getColumn(0).setMaxWidth(40);
+        openFileTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+
         openFileTable.setRowHeight(30);
         openFileTable.setFont(new Font("Arial Narrow", Font.BOLD, 20));
         openFileTable.getTableHeader().setFont(new Font("Arial Narrow", Font.BOLD, 20));
@@ -108,7 +115,7 @@ public class UI extends JPanel {
     }
 
     private JPanel createSavePanel() {
-        JLabel choiceSaveLabel = new JLabel("File not found");
+        JLabel choiceSaveLabel = new JLabel("Файл не сохранен");
 
         JButton saveButton = new JButton("Сохранить файл");
         saveButton.addActionListener(e -> {
@@ -116,13 +123,18 @@ public class UI extends JPanel {
             fileChooser.setFileFilter(filter);
             fileChooser.setDialogTitle("Сохранить файл");
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            int result = fileChooser.showOpenDialog(UI.this);
+            int result = fileChooser.showSaveDialog(UI.this);
             if (result == JFileChooser.APPROVE_OPTION) {
-                File savaFile = fileChooser.getSelectedFile();
-                controller.setSaveFile(savaFile);
-                choiceSaveLabel.setText(savaFile.toString());
-                controller.setSaveFile(savaFile);
-                JOptionPane.showMessageDialog(UI.this, savaFile);
+                File saveFile = fileChooser.getSelectedFile();
+                choiceSaveLabel.setText("Сохранено в: " + saveFile.toString());
+                try {
+                    controller.saveFile(saveFile, tableModelSaveFile);
+                    JOptionPane.showMessageDialog(UI.this, "Файл сохранен");
+                } catch (IOException e1) {
+                    JOptionPane.showMessageDialog(UI.this, "Не удалось сохранить файл");
+                    e1.printStackTrace();
+                }
+
             }
         });
 
@@ -137,7 +149,8 @@ public class UI extends JPanel {
         saveFileTable.getTableHeader().setFont(new Font("Arial Narrow", Font.BOLD, 20));
         saveFileTable.setRowHeight(30);
         saveFileTable.setFont(new Font("Arial Narrow", Font.BOLD, 20));
-
+        saveFileTable.getColumnModel().getColumn(0).setMaxWidth(40);
+        saveFileTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
         JPanel savePanel = new JPanel();
         savePanel.setLayout(new BorderLayout());
@@ -150,8 +163,8 @@ public class UI extends JPanel {
 
     private void replace() {
         // tableModelOpenFile.setRowCount(0);
-        for (int i = 0; i < tableModelSaveFile.getRowCount(); i++) {
-            tableModelOpenFile.setValueAt(tableModelSaveFile.getValueAt(i, 0), i, 0);
+        for (int i = 0; i < tableModelOpenFile.getRowCount(); i++) {
+            tableModelOpenFile.setValueAt(tableModelSaveFile.getValueAt(i, 1), i, 1);
         }
         tableModelSaveFile.setRowCount(0);
     }

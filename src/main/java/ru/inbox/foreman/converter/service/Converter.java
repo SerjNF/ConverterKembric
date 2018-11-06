@@ -8,24 +8,27 @@ public class Converter {
 
     public Object[][] convert(DefaultTableModel tableModelOpenFile, int[] selectRows) {
         int rowsCount = tableModelOpenFile.getRowCount();
-        Object[][] result = new Object[rowsCount][1];
+        Object[][] result = new Object[rowsCount + 2][2];
 
         //      List rowsList = Arrays.asList(selectRows);
 
         for (int i = 0; i < rowsCount; ++i) {
+            result[i][0] = String.valueOf(i);
             if (selectRows.length != 0) {
                 for (int selectRow : selectRows) {
                     if (selectRow == i) {
-                        result[i][0] = splitAndReverse((String) tableModelOpenFile.getValueAt(i, 0));
+                        result[i][1] = splitAndReverse((String) tableModelOpenFile.getValueAt(i, 1));
                         break;
                     } else {
-                        result[i][0] = tableModelOpenFile.getValueAt(i, 0);
+                        result[i][1] = tableModelOpenFile.getValueAt(i, 1);
                     }
                 }
             } else {
-                result[i][0] = tableModelOpenFile.getValueAt(i, 0);
+                result[i][1] = tableModelOpenFile.getValueAt(i, 1);
             }
         }
+        result[rowsCount][1] = "by SergeyNF";
+        result[rowsCount + 1][1] = "foreman@inbox.ru";
         return result;
     }
 

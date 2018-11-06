@@ -24,7 +24,7 @@ public class ConverterApplication {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        JFrame frame = new JFrame();
+        JFrame frame = new JFrame("Конвертер кабельных бирок");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);

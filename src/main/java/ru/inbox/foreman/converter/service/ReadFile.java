@@ -36,9 +36,10 @@ public class ReadFile {
             readiedList.add(stringCellValue);
         }
 
-        Object[][] resultReadList = new String[readiedList.size()][1];
+        Object[][] resultReadList = new String[readiedList.size()][2];
         for (int i = 0; i < resultReadList.length; ++i){
-            resultReadList[i][0] = readiedList.get(i);
+            resultReadList[i][1] = readiedList.get(i);
+            resultReadList[i][0] = String.valueOf(i);
         }
         return resultReadList;
     }
