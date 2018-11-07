@@ -17,7 +17,7 @@ public class MainUI extends JFrame {
         setLocationRelativeTo(null);
         UI uiConverter = new UI();
         getContentPane().add(uiConverter);
-        setSize(600, 300);
-        setMinimumSize(new Dimension(600, 300));
+
+        setMinimumSize(new Dimension(900, 300));
     }
 }

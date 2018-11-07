@@ -6,7 +6,12 @@ import javax.swing.table.DefaultTableModel;
 
 public class Converter {
 
-    public Object[][] convert(DefaultTableModel tableModelOpenFile, int[] selectRows) {
+    private String[] regexElement = {"Пробел ( )", "Слэш прямой (/)", "Двоеточие ( : )", "Подчеркивание (_)"};
+    private String[] regexString = {"[ ]+", "[/]+", "[:]+", "[_]+"};
+    private String[] regexForResult = {" ", " / ", " : ", "_"};
+
+    public Object[][] convert(DefaultTableModel tableModelOpenFile, int[] selectRows, int regexNumber) {
+
         int offSetRows = 2;
         int rowsCount = tableModelOpenFile.getRowCount();
         Object[][] result = new Object[rowsCount + offSetRows][2];
@@ -16,7 +21,7 @@ public class Converter {
             if (selectRows.length != 0) {
                 for (int selectRow : selectRows) {
                     if (selectRow == i) {
-                        result[i][1] = splitAndReverse((String) tableModelOpenFile.getValueAt(i, 1));
+                        result[i][1] = splitAndReverse((String) tableModelOpenFile.getValueAt(i, 1), regexNumber);
                         break;
                     } else {
                         result[i][1] = tableModelOpenFile.getValueAt(i, 1);
@@ -31,11 +36,18 @@ public class Converter {
         return result;
     }
 
-    private Object splitAndReverse(String valueAt) {
-        String[] splitString = valueAt.split(" ");
+    private Object splitAndReverse(String valueAt, int regexNumber) {
+
+        String[] splitString = valueAt.split(regexString[regexNumber]);
+        String[] splitS = valueAt.split("[\\ ]+ ");
+
         if (splitString.length != 3) {
             return "Не формат " + valueAt;
         }
-        return splitString[2] + " " + splitString[1] + " " + splitString[0];
+        return splitString[2].trim() + regexForResult[regexNumber] + splitString[1].trim() + regexForResult[regexNumber] + splitString[0].trim();
+    }
+
+    public String[] getRegexElement() {
+        return regexElement;
     }
 }

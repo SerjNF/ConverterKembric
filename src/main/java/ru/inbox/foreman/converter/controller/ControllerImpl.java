@@ -24,12 +24,17 @@ public class ControllerImpl implements Controller {
 
 
     @Override
-    public Object[][] convertFile(DefaultTableModel tableModel, int[] selectRows) {
-        return converter.convert(tableModel, selectRows);
+    public Object[][] convertFile(DefaultTableModel tableModel, int[] selectRows, int regexNumber) {
+        return converter.convert(tableModel, selectRows, regexNumber);
     }
 
     @Override
     public void saveFile(File saveFile, DefaultTableModel model) throws IOException {
         this.saveFile.saveFile(saveFile, model);
+    }
+
+    @Override
+    public String[] getRegexElement() {
+        return converter.getRegexElement();
     }
 }

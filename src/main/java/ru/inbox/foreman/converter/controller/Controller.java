@@ -8,7 +8,9 @@ import java.io.IOException;
 public interface Controller {
     Object[][] readFile(File selectedFile) throws IOException;
 
-    Object[][] convertFile(DefaultTableModel tableModel, int[] selectRows);
+    Object[][] convertFile(DefaultTableModel tableModel, int[] selectRows, int regex);
 
     void saveFile(File saveFile, DefaultTableModel model) throws IOException;
+
+    String[] getRegexElement();
 }

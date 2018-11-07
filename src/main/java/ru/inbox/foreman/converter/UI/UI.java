@@ -20,6 +20,7 @@ public class UI extends JPanel {
     private Object[] columnsHeader = new String[]{"№", "Наименование"};
     private FileNameExtensionFilter filter;
 
+
     public UI() {
         controller = new ControllerImpl();
         filter = new FileNameExtensionFilter("Excel", "xlsx");
@@ -39,17 +40,20 @@ public class UI extends JPanel {
     private JPanel createReadPanel() {
         JLabel choiceFileLabel = new JLabel("Файд не выбран");
         JButton openButton = createOpenButton(choiceFileLabel);
-
+        JComboBox<String> regexBox = createRegexComboBox();
         JButton convert = new JButton("Конвертировать");
         convert.addActionListener(e -> {
             tableModelSaveFile.setRowCount(0);
-            Object[][] convertedList = controller.convertFile(tableModelOpenFile, openFileTable.getSelectedRows());
+            Object[][] convertedList = controller.convertFile(tableModelOpenFile, openFileTable.getSelectedRows(), regexBox.getSelectedIndex());
             addRowsOnTable(tableModelSaveFile, convertedList);
         });
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        buttonPanel.add(openButton);
-        buttonPanel.add(convert);
+
+
+        JPanel buttonAndBoxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonAndBoxPanel.add(openButton);
+        buttonAndBoxPanel.add(convert);
+        buttonAndBoxPanel.add(regexBox);
 
         JPanel southPanel = new JPanel(new BorderLayout());
         JButton anSelectAll = new JButton("Сбросить выделение");
@@ -72,11 +76,20 @@ public class UI extends JPanel {
 
         JPanel readPanel = new JPanel();
         readPanel.setLayout(new BorderLayout());
-        readPanel.add(buttonPanel, BorderLayout.NORTH);
+        readPanel.add(buttonAndBoxPanel, BorderLayout.NORTH);
         readPanel.add(new JScrollPane(openFileTable));
         readPanel.add(southPanel, BorderLayout.SOUTH);
         readPanel.setBorder(new EmptyBorder(10, 5, 10, 10));
         return readPanel;
+    }
+
+    private JComboBox<String> createRegexComboBox() {
+        JComboBox<String> comboBox = new JComboBox<>();
+        String[] boxElement = controller.getRegexElement();
+        for (String aBoxElement : boxElement) {
+            comboBox.addItem(aBoxElement);
+        }
+        return comboBox;
     }
 
     private JButton createOpenButton(JLabel choiceFileLabel) {
