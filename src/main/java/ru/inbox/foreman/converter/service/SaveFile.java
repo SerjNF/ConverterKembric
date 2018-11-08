@@ -4,6 +4,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import ru.inbox.foreman.converter.model.Cell;
 
 import javax.swing.table.DefaultTableModel;
 import java.io.*;
@@ -26,7 +27,8 @@ public class SaveFile {
         for (int i = 0; i < model.getRowCount(); ++i) {
             XSSFRow row = sheet.createRow(i);
             XSSFCell cell = row.createCell(0);
-            cell.setCellValue(String.valueOf(model.getValueAt(i, 1)));
+            Cell getCell = (Cell) model.getValueAt(i, 1);
+            cell.setCellValue(getCell.getValue());
         }
     }
 }

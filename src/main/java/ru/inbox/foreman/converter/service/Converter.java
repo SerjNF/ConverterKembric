@@ -1,6 +1,8 @@
 package ru.inbox.foreman.converter.service;
 
 
+import ru.inbox.foreman.converter.model.Cell;
+
 import javax.swing.table.DefaultTableModel;
 
 
@@ -15,36 +17,40 @@ public class Converter {
         int offSetRows = 2;
         int rowsCount = tableModelOpenFile.getRowCount();
         Object[][] result = new Object[rowsCount + offSetRows][2];
-
+        //TODO упростить
         for (int i = 0; i < rowsCount; ++i) {
-            result[i][0] = String.valueOf(i);
+            result[i][0] = new Cell(String.valueOf(i));
             if (selectRows.length != 0) {
                 for (int selectRow : selectRows) {
                     if (selectRow == i) {
-                        result[i][1] = splitAndReverse((String) tableModelOpenFile.getValueAt(i, 1), regexNumber);
+                        result[i][1] = splitAndReverse((Cell) tableModelOpenFile.getValueAt(i, 1), regexNumber);
                         break;
                     } else {
-                        result[i][1] = tableModelOpenFile.getValueAt(i, 1);
+                        Cell cell = (Cell) tableModelOpenFile.getValueAt(i, 1);
+                        result[i][1] = new Cell(cell.getValue(), false);
                     }
                 }
             } else {
-                result[i][1] = tableModelOpenFile.getValueAt(i, 1);
+                Cell cell = (Cell) tableModelOpenFile.getValueAt(i, 1);
+                result[i][1] = new Cell(cell.getValue(), false);
             }
         }
-        result[rowsCount][1] = "by SergeyNF";
-        result[rowsCount + 1][1] = "foreman@inbox.ru";
+        result[rowsCount][1] = new Cell("by SergeyNF", false);
+        result[rowsCount + 1][1] = new Cell("foreman@inbox.ru", false);
         return result;
     }
 
-    private Object splitAndReverse(String valueAt, int regexNumber) {
-
-        String[] splitString = valueAt.split(regexString[regexNumber]);
-        String[] splitS = valueAt.split("[\\ ]+ ");
-
+    private Cell splitAndReverse(Cell valueAt, int regexNumber) {
+        String[] splitString = valueAt.getValue().split(regexString[regexNumber]);
         if (splitString.length != 3) {
-            return "Не формат " + valueAt;
+            return new Cell(valueAt.getValue(), true);
         }
-        return splitString[2].trim() + regexForResult[regexNumber] + splitString[1].trim() + regexForResult[regexNumber] + splitString[0].trim();
+        String stringBuilders = splitString[2].trim() +
+                regexForResult[regexNumber] +
+                splitString[1].trim() +
+                regexForResult[regexNumber] +
+                splitString[0].trim();
+        return new Cell(stringBuilders, false);
     }
 
     public String[] getRegexElement() {

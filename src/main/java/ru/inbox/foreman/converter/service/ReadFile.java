@@ -5,6 +5,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import ru.inbox.foreman.converter.model.Cell;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -34,10 +35,11 @@ public class ReadFile {
             readiedList.add(stringCellValue);
         }
 
-        Object[][] resultReadList = new String[readiedList.size()][2];
+        Object[][] resultReadList = new Cell[readiedList.size()][2];
         for (int i = 0; i < resultReadList.length; ++i) {
-            resultReadList[i][1] = readiedList.get(i);
-            resultReadList[i][0] = String.valueOf(i);
+            Cell cell = new Cell(readiedList.get(i), false);
+            resultReadList[i][1] = cell;
+            resultReadList[i][0] = new Cell(String.valueOf(i));
         }
         return resultReadList;
     }
